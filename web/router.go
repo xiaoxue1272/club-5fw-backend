@@ -15,14 +15,14 @@ func initRouters(engine *gin.Engine) {
 
 func basicEndPoint(group *gin.RouterGroup) {
 	group.GET("/login", func(context *gin.Context) {
-		authToken, err := generateJwt[map[string]string](map[string]string{"value": "test"})
+		authToken, err := generateJwt(&gin.H{"user": "test"})
 		if err != nil {
 			logger.Warnf("generate Jwt Token Failed.\nError: %v\n", err)
 			context.String(http.StatusInternalServerError, err.Error())
 			context.Abort()
 			return
 		}
-		context.String(http.StatusOK, authToken)
+		context.JSON(http.StatusOK, &gin.H{"token": authToken})
 	})
 }
 

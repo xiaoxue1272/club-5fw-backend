@@ -4,13 +4,14 @@ import (
 	"github.com/orandin/lumberjackrus"
 	logger "github.com/sirupsen/logrus"
 	"github.com/xiaoxue1272/club-5fw-backend/config"
+	"github.com/xiaoxue1272/club-5fw-backend/db"
 	"github.com/xiaoxue1272/club-5fw-backend/web"
 )
 
 func configureLogger(logCfg *config.LoggerConfiguration) {
 	level, err := logger.ParseLevel(logCfg.Level)
 	if err != nil {
-		panic("Unknown logger level, please ensure that the configured level is correct")
+		panic(err)
 	}
 	logger.SetLevel(level)
 	textFormatter := &logger.TextFormatter{
@@ -24,7 +25,8 @@ func configureLogger(logCfg *config.LoggerConfiguration) {
 		},
 	}
 	logger.SetFormatter(textFormatter)
-	hook, err := lumberjackrus.NewHook(
+	var hook *lumberjackrus.Hook
+	hook, err = lumberjackrus.NewHook(
 		configureLogFile(logCfg, "log/general.log"),
 		level,
 		textFormatter,
@@ -56,5 +58,6 @@ func main() {
 		logger.Infoln("Using default builtin configurations.")
 	}
 	configureLogger(configuration.Logger)
+	db.ConnectDatabase(configuration.Database)
 	web.StartWebServer(configuration.Web)
 }

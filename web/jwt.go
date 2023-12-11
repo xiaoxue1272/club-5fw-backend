@@ -9,9 +9,9 @@ import (
 	"time"
 )
 
-type ClubGlobalClaims[T any] struct {
+type ClubGlobalClaims struct {
 	*jwt.RegisteredClaims
-	Data T `json:"data,omitempty"`
+	Data any `json:"data,omitempty"`
 }
 
 const Issuer = "5fw.club"
@@ -35,8 +35,8 @@ var jwtParse = jwt.NewParser(
 	jwt.WithPaddingAllowed(),
 	jwt.WithValidMethods([]string{"RS512"}))
 
-func generateJwt[T any](data T) (string, error) {
-	claims := &ClubGlobalClaims[T]{
+func generateJwt(data any) (string, error) {
+	claims := &ClubGlobalClaims{
 		RegisteredClaims: &jwt.RegisteredClaims{
 			Issuer:    Issuer,
 			Subject:   "Auth",
@@ -47,8 +47,8 @@ func generateJwt[T any](data T) (string, error) {
 	return jwt.NewWithClaims(SignMethod, claims).SignedString(rsaKey)
 }
 
-func resolveJwt[T any](tokenString string) (*T, error) {
-	token, err := jwtParse.ParseWithClaims(tokenString, &ClubGlobalClaims[T]{}, func(token *jwt.Token) (interface{}, error) {
+func resolveJwt(tokenString string) (*any, error) {
+	token, err := jwtParse.ParseWithClaims(tokenString, &ClubGlobalClaims{}, func(token *jwt.Token) (any, error) {
 		if token.Method == SignMethod {
 			return &rsaKey.PublicKey, nil
 		}
@@ -57,7 +57,7 @@ func resolveJwt[T any](tokenString string) (*T, error) {
 	if err != nil {
 		return nil, err
 	}
-	claims, ok := token.Claims.(*ClubGlobalClaims[T])
+	claims, ok := token.Claims.(*ClubGlobalClaims)
 	if ok {
 		return &claims.Data, nil
 	}

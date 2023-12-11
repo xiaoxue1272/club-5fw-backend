@@ -44,7 +44,7 @@ func JwtAuthorization() gin.HandlerFunc {
 			return
 		}
 		authToken := authHeaderSplit[1]
-		data, err := resolveJwt[map[string]string](authToken)
+		data, err := resolveJwt(authToken)
 		if err != nil {
 			if data != nil {
 				context.String(http.StatusForbidden, err.Error())

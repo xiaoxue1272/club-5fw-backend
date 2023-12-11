@@ -6,8 +6,9 @@ import (
 )
 
 type Configuration struct {
-	Logger *LoggerConfiguration `mapstructure:"logger,sqursh" json:"logger" yaml:"logger" `
-	Web    *WebConfiguration    `mapstructure:"web,sqursh" json:"web" yaml:"web"`
+	Logger   *LoggerConfiguration   `mapstructure:"logger,sqursh" json:"logger" yaml:"logger" `
+	Web      *WebConfiguration      `mapstructure:"web,sqursh" json:"web" yaml:"web"`
+	Database *DataBaseConfiguration `mapstructure:"database,sqursh" json:"database" yaml:"database"`
 }
 
 type LoggerConfiguration struct {
@@ -30,14 +31,19 @@ type WebConfiguration struct {
 	Host string `mapstructure:"host" json:"host" yaml:"host"`
 }
 
+type DataBaseConfiguration struct {
+	Dns string `mapstructure:"dns" json:"dns" yaml:"dns"`
+}
+
 var standardConfiguration *Configuration = nil
 
 var InitConfigErr error = nil
 
 func useDefaultConfiguration() {
 	standardConfiguration = &Configuration{
-		Logger: defaultLoggerConfiguration(),
-		Web:    defaultWebConfiguration(),
+		Logger:   defaultLoggerConfiguration(),
+		Web:      defaultWebConfiguration(),
+		Database: defaultDatabaseConfiguration(),
 	}
 	viper.Set("logger", standardConfiguration.Logger)
 	viper.Set("web", standardConfiguration.Web)
@@ -46,7 +52,7 @@ func useDefaultConfiguration() {
 func defaultLoggerConfiguration() *LoggerConfiguration {
 	return &LoggerConfiguration{
 		Formatter: &LoggerFormatterConfiguration{
-			DisableColors:   false,
+			DisableColors:   true,
 			DisableSorting:  true,
 			TimestampFormat: "2006-01-02 15:01:05",
 		},
@@ -63,6 +69,12 @@ func defaultWebConfiguration() *WebConfiguration {
 	return &WebConfiguration{
 		Host: "127.0.0.1",
 		Port: 9090,
+	}
+}
+
+func defaultDatabaseConfiguration() *DataBaseConfiguration {
+	return &DataBaseConfiguration{
+		Dns: "user:password@tcp(127.0.0.1:3306)/dbname?charset=utf8mb4&parseTime=true&loc=Asia%2FShanghai&allowAllFiles=true&timeout=30s",
 	}
 }
 
