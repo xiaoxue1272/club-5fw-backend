@@ -8,14 +8,20 @@ import (
 
 var engine *gin.Engine
 
-func init() {
+var runAddr string
+
+func Init(webConfig *config.WebConfiguration) {
+	runAddr = webConfig.Host + ":" + strconv.Itoa(webConfig.Port)
 	engine = gin.New()
-	engine.Use(requestLogger(), recovery())
+	initJwt(webConfig.Jwt)
+	initJsonCipher(webConfig.CipherJson)
+	engine.Use(recovery, corsAccess(), requestLogger)
 	initRouters(engine)
+	engine.Use(errorHandler)
 }
 
-func StartWebServer(webConfig *config.WebConfiguration) {
-	err := engine.Run(webConfig.Host + ":" + strconv.Itoa(webConfig.Port))
+func StartWebServer() {
+	err := engine.Run(runAddr)
 	if err != nil {
 		panic(err)
 	}

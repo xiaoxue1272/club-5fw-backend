@@ -1,11 +1,12 @@
 package web
 
 import (
-	"crypto/rand"
 	"crypto/rsa"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/pkg/errors"
 	logger "github.com/sirupsen/logrus"
+	"github.com/xiaoxue1272/club-5fw-backend/config"
+	"github.com/xiaoxue1272/club-5fw-backend/utils"
 	"time"
 )
 
@@ -16,16 +17,32 @@ type ClubGlobalClaims struct {
 
 const Issuer = "5fw.club"
 
-var rsaKey *rsa.PrivateKey
+var PrivateKey *rsa.PrivateKey
 
-var SignMethod = jwt.SigningMethodRS512
+var PublicKey *rsa.PublicKey
 
-func initJwt() {
-	key, err := rsa.GenerateKey(rand.Reader, 1024)
-	if err != nil {
-		logger.Panicf("Generate RSA key failed.\nError: %v", err)
+var SignMethod jwt.SigningMethod
+
+func initJwt(jwtConfig *config.JwtConfiguration) {
+	SignMethod = jwt.GetSigningMethod(jwtConfig.Alg)
+	if SignMethod == nil {
+		logger.Panic("Unknown jwt alg method, please check it")
 	}
-	rsaKey = key
+
+	if jwtConfig.Rsa.PrivateKey != "" && jwtConfig.Rsa.PublicKey != "" {
+		logger.Info("Loading jwt rsa key pair from jwt configuration")
+		var err error
+		PrivateKey, err = utils.ResolveRsaPrivateKey([]byte(jwtConfig.Rsa.PrivateKey))
+		if err != nil {
+			logger.Panicf("Failed to load jwt rsa private key from pem file, casue %v", err)
+		}
+		PublicKey, err = utils.ResolveRsaPublicKey([]byte(jwtConfig.Rsa.PublicKey))
+		if err != nil {
+			logger.Panicf("Failed to load jwt rsa public key from pem file, casue %v", err)
+		}
+	} else {
+		logger.Panic("Jwt RSA key pair pem is empty")
+	}
 }
 
 var jwtParse = jwt.NewParser(
@@ -44,13 +61,13 @@ func generateJwt(data any) (string, error) {
 		},
 		Data: data,
 	}
-	return jwt.NewWithClaims(SignMethod, claims).SignedString(rsaKey)
+	return jwt.NewWithClaims(SignMethod, claims).SignedString(PrivateKey)
 }
 
 func resolveJwt(tokenString string) (*any, error) {
 	token, err := jwtParse.ParseWithClaims(tokenString, &ClubGlobalClaims{}, func(token *jwt.Token) (any, error) {
 		if token.Method == SignMethod {
-			return &rsaKey.PublicKey, nil
+			return PublicKey, nil
 		}
 		return nil, errors.New("Only RS256 alg can be parsed")
 	})

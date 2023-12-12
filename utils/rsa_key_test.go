@@ -1,0 +1,111 @@
+package utils
+
+import "testing"
+
+func TestReadRsaPCK8PrivateKey(t *testing.T) {
+	pem := []byte(`-----BEGIN PRIVATE KEY-----
+MIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQC8rPeLoCtO9RDP
+DVxGUMYcW+E1hWzP1xWu9cr12Q10gD1SMMnsOaw0ChwGu3C5+bsiY/gZlYnyomtI
+u2zIohjTlZSRbQX+gBBzpYlPPGZ4FSRCB9ltVE8i3Hvme+kJiAfe/KhMu5SBTRJh
+3C5IDwG47meP8pZJaHRjSPvxepySsME+IVEwfIJMPj7nnoBR+wRRyYUJUdKyPY7e
+7GoG8mImsxqeCZP2cyNTALBp/qdRZDx/WNE4bo1Y+4LPnDPbf+oa7me6oCSvZUi3
+Z1F8bkEWxWbrAt89BIyus2+/rZ5v2h8XQXPieeaqdDlMkU88dvzim0/AWzmkI7cI
+eAjXeXkfAgMBAAECggEAfou0bJ287nRIFddsMG00swidAHzBApXMIVESE9rEv4LT
+njDC/gGgkjbFnW5SqSnqbaKHYQF/SJHPSzUKPXcbF66XuwJYpt3WKvq4IcDtKVVk
+wDTri/ykJ0migHBTWOU4AkOLzgtyC1daIPDAyevmx9Z+93lJe2rnxT/KW6hVI7zq
+ctwULah7fAuuhfneNTmlo8RB9HWYBxlvkoUD7cQePlO0I2YaFqz4s3JKCZpOuQTB
+B0MQfLpjllzQBUvZXgvE9OuGszm8DJh3wSc9fkUixHJf6ZFmxzfNFU+z36PYKrBY
+PHrtxsJRsjdAJrHlMUDqXUkLiBEzkdLCfbgtasuCgQKBgQDm7phdnixshgfZ5Hkt
+j6G3h0fTSzTXhBhhpCqLwVLAbYjKEdyRMwghbnfNVEs1F+D1pdSE4ZFyGmrPuQHZ
+HIlL/nOQO2Xah3Qt0YEMGIV7pFfDJobO5dfTNCK8onnOiMh4SbJDdvVst7xtxMUs
+NGfE0MzRLpc7+weGJLQ9Du+SDwKBgQDRKBp2ybT5NdQd8yOfIPpmCSN5pEHbHvKb
+1txLg50vgw+ChdOFqL/g4TuJHbxvwltP6Wd1jRp3YDPN77MIYist4+oPKJBfaWaP
+w8bUTXW6vrFb8jr5BIFhac+RmEzbQZ4cDAtMFflTmYkGsOcpL8RTFIMsccagHAQN
+8WChQDR38QKBgDqOgaArfYQ/MDp2DqwY4Z7R9MqFJW8Ilc4cfJVXfg5BOBBVGyLO
+V99yTXqJR1C9L1PaqtrO/7x5KmBlvyw4ajAU42TNSvRwqGr91sUkaqSBdaeMW16X
+NXTeoXhHkq9mS78EoOkufukEZglHfd/Jog5sC6N3Nu4Ep1HCeNmKsgDNAoGABFI5
+yb59GLD+AuhlEgKSac1CiF7WZXqMNKAJyR2c/8BLb7zoE9jargC5RCnzHLP9Qvdl
+hc42f8TjDRworMGqdrZAvbNu2CnLTqkS0IwRJJyP+YBVq5NmQOb4vN9Spy0B4T52
+dUn27r07UYISJI2yFq1T0HVBT0mE4+zavDohW2ECgYBPCtUq4q0a2EfhlMPfttWX
+bq6cs9P5NjtoQ7cRJV3lgB22zj0Qo1cL3QZ3C+I6QtNivQtV/TX7tV2iYOxNm3/+
+Sn33MykTuYKId1P0h9cN2A3d7mfeDGKgGSxtwpkfQ/LMq2A6nij6oNCwzW6+KfcQ
+USLgBFILXbV7c+NY9AlufA==
+-----END PRIVATE KEY-----`)
+	key, err := ResolveRsaPrivateKey(pem)
+	if err != nil {
+		t.Log(err)
+		t.Fail()
+	}
+	t.Logf("success: %v", key)
+}
+
+func TestReadRsaPCK1PrivateKey(t *testing.T) {
+	pem := []byte(`-----BEGIN RSA PRIVATE KEY-----
+MIIEpAIBAAKCAQEArNTSyMC9AcP3TDx4mnEjSNUbj63bZX9bjE2xus8w9K7NG1YP
+aeI6QJpl6PaJA4YL+XqNd1RDgG44P/JX8j/xVAF0Icjzv5jXkEP8Gsd3fheyqmEH
+WrJZSLTvzivh9uViHXpD0Q72LpxVfwiFTqgWXr9CV6xe34L0ciaclNyLeXwgpp3+
+K7R3B3WxFxDGz0azH/+0JHpETyortGdBBNCkGWEX7DKU3RcxRPeTXJFOGSTWmNwY
+acTGmOy5fEyQnNFQ4d21Yf3fMJk63L0mRi0dT6BXhu5dD1ncwpFvQJZk5dKjwang
+2XBuAD+lV0b1E85i3uEZ2qngwXwkWVn1PDKoEwIDAQABAoIBAH0RMUtm9h9N8Snw
+5JFWZ+Mvm9c4R3jGVbhNDN0TS+j0iaZLe7HyrJbNZAvWQ8YR/Z5WSgLdLk/E8t2L
+gIrkLL3Oo3xDT+gJMYzLNacnStgrS/YxasH+J9AOZy554PXqfjq4nFSvkASgytm3
+j8ggqLd9jgOlz63MtRnZyRuMET4iHR414CiaL0+BaZCBzFIHJ5ginCvDkNswDC2+
++nzMAA/TIQf8ZSqF2JGzkFR9nu1r0AM7sVZ191pe1Y13xDT4aHvh6WvQ4pnd9lo3
+7cKtna9j2CXrGizpELZoHqxBuOCKIhRX4kO+lcpu/+1yjS430WvWT1JX++VJVc3W
+Wg0SvykCgYEA3dNOWnsrWuFkUQf0CftkK5RRJM9ggSitM3L30vaPDpI2g5NH3opu
+gxEDc63YO/2rbTIfQqIBDb3ze9c0kTAm90Th6WhCpVkIwTyHHAPZD5ZM40PUAvTF
+Jh4hSVC+60S3+HidsEfF2qGtQRX09pbLJ/4uDh6Q/Xm3NlzO7qWP6n8CgYEAx3U2
+lzkY/9qkpf2SfCvhZd8Rq710xOlS8GAqS+ddy3c5mlanHL1RX26zBLKX86bPCw9u
+mUzjZ2iYLKfgnFRYGSuc2uyNnbNwG4bnXUhL5pJ9bRLB0wY35v67NPfgjykXKDQF
+yjFOtw4zw0YQAtA5BeHOtE4mL+tuDGMX5zwMMG0CgYEAqFmYG59i1gQ9KCpLEdBS
+w6g6tR8V9LA0UtmsL9Wj2MEq0kzSvJh/KsWcwwxrEYyBr8vcYaul9RH2WkSHxrCu
+wfbrJUNVYTvjIxSWzbI16Fh/XfO6UcwGW9l+FbBMVS3AGbkgpAq0pCsT3FOXqBXl
+dSK5PUoBa/4WCBIDkqbgRG0CgYEAtHeAgkkeLnkEmk+ZV5JYaVTw5yQPYA8AhQ9t
+lanseqkQTG303BMLaj596VUyGTmngYlf94LTCoBfl5/5oVjLMVL9pDN+Wt69I5rn
+AcblLeUDaUocZzPsJqv6dI2G9+Ek27JePrhoUUafXSKqX/FIduL9pLRE5vysYLbU
+LNtu5+0CgYBWSOdJNoSWJYFc2PH3JsJ+nR28PGl71v0JFsfLvfOO1Qw/q/xMTqWa
+qedY1bYtZP9fWcvtJtR+l7vqlzNW7wLTFOKJTRQaH79y9EcZYc4zSKH0bKeiCAU7
+lALecLmuc+ge+m8oZ3t+87wMNafQI/482b6hs1y9BsL8ORYhrTNYAw==
+-----END RSA PRIVATE KEY-----`)
+	key, err := ResolveRsaPrivateKey(pem)
+	if err != nil {
+		t.Log(err)
+		t.Fail()
+	}
+	t.Logf("success: %v", key)
+}
+
+func TestReadRsaPCK8PublicKey(t *testing.T) {
+	pem := []byte(`-----BEGIN PUBLIC KEY-----
+MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA11XdG+2uBwmpvXkBvKXi
+kk+AnKUR+YT+EBsCiyGaS64kK3heCkiSF9Rwo2SXaQoL1FyWiAkhKcLDJce2E4ye
+f9hRxDliXxgbCxebN0CRQHEm04KBdHj+e0Zs+uZ6aXwDpYtziPSOhOhUxLefvncr
+0BfdEGmZVMwK3aDDZ/cJXXywDaw+fnDvfgcEaYxtK3oM9gHr5j4P2dILlCavXJ5G
+B5ZlNpT90G951cv9oXPEAExN/Bm+pShzIBg8J1UcGAigwAYztOA5fghglNkoVxoP
+nc8a7eYLBTZ0SSWiAKgnP5b8J8yl8io8j73NQjCsVzGxo9xzugYtYAMgmIGU5cvK
+EQIDAQAB
+-----END PUBLIC KEY-----`)
+	key, err := ResolveRsaPublicKey(pem)
+	if err != nil {
+		t.Log(err)
+		t.Fail()
+	}
+	t.Logf("success: %v", key)
+}
+
+func TestReadRsaPCK1PublicKey(t *testing.T) {
+	pem := []byte(`-----BEGIN RSA PUBLIC KEY-----
+MIIBCgKCAQEApCS5D+78A06on99HzmqaAHI73vraVhZeo98I/7K9qjojSrXvIxbg
+4Ao0L+8L/bgqpu6T3tgcURjSj4TcmtvEvOQ9WvWERFTY8Jnm32N7StJdukpyDz3a
+5cB6R25u21ijn1+i7XyDbiqzXJwh8nHUaaTfXcvAHb8igkPKlsutIPpTp1CizS0Q
+dsk5HuIqb/39bCZF3OlCVTWeyN6ttbTAtoROL7evyM0CU9yiHj8kFHC2w3VGJIPy
+uvaLdfi6A1Hwx1R4tQxasRIDOIWZlRDuSXVNgCCXuiWlJrgtN4vPzZ0WRLuU9H3P
+TaJeHFoNHV9JPrhHd6ofQDuet4d0Dm7WjQIDAQAB
+-----END RSA PUBLIC KEY-----`)
+	key, err := ResolveRsaPublicKey(pem)
+	if err != nil {
+		t.Log(err)
+		t.Fail()
+	}
+	t.Logf("success: %v", key)
+}

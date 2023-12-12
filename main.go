@@ -53,11 +53,8 @@ func configureLogFile(logCfg *config.LoggerConfiguration, fileName string) *lumb
 
 func main() {
 	configuration := config.GetConfiguration()
-	if config.InitConfigErr != nil {
-		logger.Warnf("Loading configuration file failed. \nError: %v\n", config.InitConfigErr)
-		logger.Infoln("Using default builtin configurations.")
-	}
 	configureLogger(configuration.Logger)
-	db.ConnectDatabase(configuration.Database)
-	web.StartWebServer(configuration.Web)
+	web.Init(configuration.Web)
+	db.Init(configuration.Database)
+	web.StartWebServer()
 }

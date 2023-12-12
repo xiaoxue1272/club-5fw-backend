@@ -2,24 +2,37 @@ package web
 
 import (
 	"github.com/gin-gonic/gin"
-	logger "github.com/sirupsen/logrus"
+	"github.com/xiaoxue1272/club-5fw-backend/config"
+	"github.com/xiaoxue1272/club-5fw-backend/model"
+	"github.com/xiaoxue1272/club-5fw-backend/service"
 	"net/http"
 )
 
 func initRouters(engine *gin.Engine) {
-	initJwt()
 	basicEndPoint(&engine.RouterGroup)
-	authGroup := engine.Group("/auth", JwtAuthorization())
-	authGroupEndpoint(authGroup)
+	authGroupEndpoint(engine.Group("/auth", jwtAuthorization))
 }
 
 func basicEndPoint(group *gin.RouterGroup) {
-	group.GET("/login", func(context *gin.Context) {
-		authToken, err := generateJwt(&gin.H{"user": "test"})
+	group.GET("/publicKey", func(context *gin.Context) {
+		context.String(http.StatusOK, config.GetConfiguration().Web.CipherJson.Rsa.PublicKey)
+	})
+
+	group.POST("/sign", func(context *gin.Context) {
+		userSign := &model.UserSign{}
+		err := context.ShouldBindBodyWith(userSign, CipherJson)
 		if err != nil {
-			logger.Warnf("generate Jwt Token Failed.\nError: %v\n", err)
-			context.String(http.StatusInternalServerError, err.Error())
-			context.Abort()
+			_ = context.Error(err)
+			return
+		}
+		jwt, err := service.Sign(userSign)
+		if err != nil {
+			_ = context.Error(err)
+			return
+		}
+		authToken, err := generateJwt(jwt)
+		if err != nil {
+			_ = context.Error(err)
 			return
 		}
 		context.JSON(http.StatusOK, &gin.H{"token": authToken})
@@ -27,8 +40,11 @@ func basicEndPoint(group *gin.RouterGroup) {
 }
 
 func authGroupEndpoint(group *gin.RouterGroup) {
+	group.GET("/user/icon", func(context *gin.Context) {
+		// todo 获取用户头像
+	})
 	group.GET("/hello", func(context *gin.Context) {
-		value, _ := context.Get("data")
+		value, _ := context.Get("jwt")
 		context.PureJSON(http.StatusOK, value)
 	})
 }
